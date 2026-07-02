@@ -74,3 +74,9 @@ plt.show()
 #10% of employee with no overtime attritions
 #30% of employee with overtime attritions
 #Overtime can also be a factor
+
+#1.The attrition rate is ~16% with the ratio of stayed vs left as 1233:237 
+#2.The attrition is dependent on several factors like Overtime, MonthlyIncome, Job role, Department etc.
+#3.I have found out that factors like OverTime and MonthlyIncome influences the attrition rate a lot, so while building the model I will look into that more.
+
+print(data.unique())
