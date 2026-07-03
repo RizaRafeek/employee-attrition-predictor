@@ -54,3 +54,5 @@ print(data.shape)
 #engineered 4 different featres and found their correlation as well as their individual value's correlation to attrition 
 #found the correlation of all the ccolumns to eachother and then constructed a heatmap to visually represent it 
 #sorted the columns with respect to their correlation and dropped the columns which had values close to zero -dropped 6 unwanted columns in total including some other irrelevant columns.
+
+data.to_csv('data/processed_data.csv', index=False)
