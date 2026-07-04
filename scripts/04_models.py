@@ -7,6 +7,7 @@ from sklearn.tree import DecisionTreeClassifier, plot_tree
 from sklearn.ensemble import RandomForestClassifier
 import matplotlib.pyplot as plt
 import seaborn as sns
+from xgboost import XGBClassifier
 
 data = pd.read_csv('data/processed_data.csv')
 data.shape
@@ -212,3 +213,54 @@ plt.gca().invert_yaxis()        #invert :the most ranked to be at the top
 results_df = pd.DataFrame(results).T
 print(results_df)
 #Sometimes a simple model can be more apt for a problem than sophisticated ones.It all depends on the problem we are soling and the datset we are handling
+
+xgb = XGBClassifier(n_estimators=100, learning_rate = 0.1, max_depth =4, random_state =42)
+xgb.fit(x_train_scaled, y_train)
+y_pred_xgb = xgb.predict(x_test_scaled)
+
+acc_xgb = accuracy_score(y_test, y_pred_xgb)
+f1_xgb = f1_score(y_test, y_pred_xgb)
+y_proba_xgb = xgb.predict_proba(x_test_scaled)[:,1]
+auc_xgb = roc_auc_score(y_test, y_proba_xgb)
+xgb_conf = confusion_matrix(y_test, y_pred_xgb)
+print("acc_xgb: ",acc_xgb)
+print("f1_xgb: ",f1_xgb)
+print("auc_xgb: ", auc_xgb)
+print("auc_conf: ",xgb_conf)
+
+xgb2 = XGBClassifier(n_estimators=100, learning_rate = 0.3, max_depth =4, random_state =42)
+xgb2.fit(x_train_scaled, y_train)
+y_pred_xgb2 = xgb2.predict(x_test_scaled)
+
+acc_xgb2 = accuracy_score(y_test, y_pred_xgb2)
+f1_xgb2 = f1_score(y_test, y_pred_xgb2)
+y_proba_xgb2 = xgb2.predict_proba(x_test_scaled)[:,1]
+auc_xgb2 = roc_auc_score(y_test, y_proba_xgb2)
+xgb_conf2 = confusion_matrix(y_test, y_pred_xgb2)
+print("acc_xgb2: ",acc_xgb2)
+print("f1_xgb2: ",f1_xgb2)
+print("auc_xgb2: ", auc_xgb2)
+print("xgb2_conf: ",xgb_conf2)
+
+xgb3 = XGBClassifier(n_estimators=100, learning_rate = 0.01, max_depth =4, random_state =42)
+xgb3.fit(x_train_scaled, y_train)
+y_pred_xgb3 = xgb3.predict(x_test_scaled)
+
+acc_xgb3 = accuracy_score(y_test, y_pred_xgb3)
+f1_xgb3 = f1_score(y_test, y_pred_xgb3)
+y_proba_xgb3 = xgb3.predict_proba(x_test_scaled)[:,1]
+auc_xgb3 = roc_auc_score(y_test, y_proba_xgb3)
+xgb_conf3 = confusion_matrix(y_test, y_pred_xgb3)
+print("acc_xgb3: ",acc_xgb3)
+print("f1_xgb3: ",f1_xgb3)
+print("auc_xgb3: ", auc_xgb3)
+print("xgb3_conf: ",xgb_conf3)
+
+#the learning rate 0.01 performs the worst among three.
+#because the learning rate is very small ,the tree has not learned anything even after 100 trees,it might require 1000s of trees
+results['XGBoost'] = {
+    'accuracy': acc_xgb,
+    'f1': f1_xgb,
+    'auc': auc_xgb
+}
+print(results)
