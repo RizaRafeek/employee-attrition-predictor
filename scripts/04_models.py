@@ -4,6 +4,7 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score, classification_report, roc_auc_score, confusion_matrix, f1_score
 from sklearn.tree import DecisionTreeClassifier, plot_tree
+from sklearn.ensemble import RandomForestClassifier
 import matplotlib.pyplot as plt
 import seaborn as sns
 
@@ -61,24 +62,24 @@ dt_model.fit(x_train_scaled, y_train)
 y_pred_dt = dt_model.predict(x_test_scaled)
 
 acc_dt = accuracy_score(y_test,y_pred_dt)
-print("Accuracy:", acc_dt)
-print(classification_report(y_test, y_pred_dt))
+#print("Accuracy:", acc_dt)
+#print(classification_report(y_test, y_pred_dt))
 f1_dt = f1_score(y_test, y_pred_dt)
-print('F1 Score:', f1_dt)
+#print('F1 Score:', f1_dt)
 
 y_proba_dt = dt_model.predict_proba(x_test_scaled)[:, 1]
 auc_dt = roc_auc_score(y_test, y_proba_dt)
-print("AUC-ROC", auc_dt)
+#print("AUC-ROC", auc_dt)
 
 cm_dt = confusion_matrix(y_test, y_pred_dt)
-print("cm :", cm_dt)
+#print("cm :", cm_dt)
 
 
 #tree keeps on splitting based on the yes/no values of each column and learn how a specific employee left and what was his column values
 #instead o learning the broder pattern
 
 plt.figure(figsize=(20,10))
-plot_tree(dt_model, max_depth=3, feature_names=x.columns, class_names=['Stayed','Left'], filled = True)
+#plot_tree(dt_model, max_depth=3, feature_names=x.columns, class_names=['Stayed','Left'], filled = True)
 
 #Overtime was the root node, which is the single strongest predictor
 
@@ -86,38 +87,38 @@ dt3 = DecisionTreeClassifier(max_depth= 3, random_state = 42)
 dt3.fit(x_train_scaled, y_train)
 train_acc3 = accuracy_score(y_train, dt3.predict(x_train_scaled))     #Accuracy on trained data
 test_acc3 = accuracy_score(y_test, dt3.predict(x_test_scaled))        #accuracy on test data
-print(train_acc3)
-print(test_acc3)
+#print(train_acc3)
+#print(test_acc3)
 f1_dt3 = f1_score(y_test, dt3.predict(x_test_scaled))
-print("F1 (depth=3):", f1_dt3)
-print(confusion_matrix(y_test, dt3.predict(x_test_scaled)))
+#print("F1 (depth=3):", f1_dt3)
+#print(confusion_matrix(y_test, dt3.predict(x_test_scaled)))
 
 dt5 = DecisionTreeClassifier(max_depth=5, random_state=42)
 dt5.fit(x_train_scaled, y_train)
 train_acc5 = accuracy_score(y_train, dt5.predict(x_train_scaled))
 test_acc5 = accuracy_score(y_test, dt5.predict(x_test_scaled))
-print("train_acc5:" ,train_acc5)
-print("test_acc5 :", test_acc5)
+#print("train_acc5:" ,train_acc5)
+#print("test_acc5 :", test_acc5)
 f1_dt5 = f1_score(y_test, dt5.predict(x_test_scaled))
-print("F1 depth=5:", f1_dt5)
+#print("F1 depth=5:", f1_dt5)
 
 dt10 = DecisionTreeClassifier(max_depth=10, random_state=42)
 dt10.fit(x_train_scaled, y_train)
 train_acc10 = accuracy_score(y_train, dt10.predict(x_train_scaled))
 test_acc10 = accuracy_score(y_test, dt10.predict(x_test_scaled))
-print("train_acc10 :", train_acc10)
-print("test_acc10 :", test_acc10)
+#print("train_acc10 :", train_acc10)
+#print("test_acc10 :", test_acc10)
 f1_dt10 = f1_score(y_test, dt10.predict(x_test_scaled))
-print("F1 depth=10:", f1_dt10)
+#print("F1 depth=10:", f1_dt10)
 
 dt_none = DecisionTreeClassifier(max_depth=None, random_state=42)
 dt_none.fit(x_train_scaled, y_train)
 train_acc_none = accuracy_score(y_train, dt_none.predict(x_train_scaled))
 test_acc_none = accuracy_score(y_test, dt_none.predict(x_test_scaled))
-print("train_acc_none: ",train_acc_none)
-print("test_acc_none :", test_acc_none)
+#print("train_acc_none: ",train_acc_none)
+#print("test_acc_none :", test_acc_none)
 f1_dt_none = f1_score(y_test, dt_none.predict(x_test_scaled))
-print("F1 depth=None:", f1_dt_none)
+#print("F1 depth=None:", f1_dt_none)
 
 #this shows how increasing the depth of the tree makes the model learn and overfit and do better on training data while declining accuracy in testing data
 
@@ -132,7 +133,7 @@ plt.xlabel('Max Depth')
 plt.ylabel('Accuracy')
 plt.title('Train vs Tesst Accuracy by Tree Depth')
 plt.legend()
-plt.show()
+#plt.show()
 
 # A Decision Tree with unlimited depth keeps splitting until it perfectly memorizes the training data - at max_depth=None, train accuracy hit 1.0 (100%), but test accuracy was only 0.79.
 # This gap between near-perfect training performance and weaker test performance is overfitting: the tree learned overly specific rules tied to individual training examples instead of general patterns.
@@ -143,7 +144,71 @@ results['Decision Tree (best depth=10)'] = {
     'f1': f1_dt10,
     'auc': roc_auc_score(y_test, dt10.predict_proba(x_test_scaled)[:, 1])
 }
-print(results)
+#print(results)
 
 #on imbalanced dataset, prioritise f1(how many actual leavers were caught(recall)against precision) over accuracy
 #on nearly balanced dataset, maybe you can consider accuracy
+
+rf_model = RandomForestClassifier(n_estimators = 100, random_state = 42)
+rf_model.fit(x_train_scaled, y_train)
+y_pred_rf = rf_model.predict(x_test_scaled)
+
+acc_rf = accuracy_score(y_test, y_pred_rf)
+#print("Accuracy Score(rf): ", acc_rf)
+f1_rf = f1_score(y_test, y_pred_rf)
+#print("F1 Score(rf): ",f1_rf)
+y_proba_rf = rf_model.predict_proba(x_test_scaled)[:,1]
+auc_rf = roc_auc_score(y_test, y_proba_rf)
+#print("Auc(rf): ",auc_rf)
+cm_rf = confusion_matrix(y_test, y_pred_rf)
+#print("Confusion Matric(rf):", cm_rf)
+#print("classification report(rf):", classification_report(y_test,y_pred_rf))
+
+results['Random Forest'] = {
+    'accuracy': acc_rf,
+    'f1': f1_rf,
+    'auc': auc_rf
+}
+#print(results)
+#results before we balance the random forest
+#right at this stage the random forest performed worse than the previous models
+
+rf_model_balanced = RandomForestClassifier(n_estimators=100, random_state=42, class_weight='balanced')
+rf_model_balanced.fit(x_train_scaled, y_train)
+y_pred_rf_bal = rf_model_balanced.predict(x_test_scaled)
+
+acc_rf_bal = accuracy_score(y_test, y_pred_rf_bal)
+f1_rf_bal = f1_score(y_test, y_pred_rf_bal)
+y_proba_rf_bal = rf_model_balanced.predict_proba(x_test_scaled)[:, 1]
+auc_rf_bal = roc_auc_score(y_test, y_proba_rf_bal)
+cm_rf_bal = confusion_matrix(y_test, y_pred_rf_bal)
+
+#print("Accuracy (rf balanced):", acc_rf_bal)
+#print("F1 (rf balanced):", f1_rf_bal)
+#print("AUC (rf balanced):", auc_rf_bal)
+#print("Confusion Matrix (rf balanced):", cm_rf_bal)
+
+# Tried class_weight='balanced' as a quick fix - improved F1 slightly (0.140 -> 0.186) and AUC (0.757 -> 0.784), but still well below Logistic Regression's F1 of 0.537.
+# This suggests the imbalance problem needs a stronger fix than just class weighting alone (e.g. SMOTE oversampling, or adjusting the classification threshold) - worth revisiting later in the project.
+
+importances = rf_model.feature_importances_
+#print(importances)
+feat_importance = pd.Series(importances, index=x.columns) #for an indexed list
+feat_importance_sorted = feat_importance.sort_values(ascending=False)
+print(feat_importance_sorted)
+
+# DailyRate and MonthlyRate rank moderately high in feature importance, but MonthlyIncome itself was dropped in Day 3 based on IncomeToAge's weak correlation.
+# Since IncomeToAge was later also dropped (weaker than its components), the salary signal may have been lost entirely rather than replaced - worth reconsidering MonthlyIncome in a future iteration.
+
+top15 = feat_importance_sorted.head(15)
+plt.figure(figsize=(10,8))
+plt.barh(top15.index, top15.values)
+plt.xlabel('Importance')
+plt.ylabel('Feature')
+plt.title('Top 15 Feature Importances - Rndom Forest')
+plt.gca().invert_yaxis()        #invert :the most ranked to be at the top
+#plt.show()
+
+results_df = pd.DataFrame(results).T
+print(results_df)
+#Sometimes a simple model can be more apt for a problem than sophisticated ones.It all depends on the problem we are soling and the datset we are handling
