@@ -8,6 +8,7 @@ from sklearn.ensemble import RandomForestClassifier
 import matplotlib.pyplot as plt
 import seaborn as sns
 from xgboost import XGBClassifier
+import joblib
 
 data = pd.read_csv('data/processed_data.csv')
 data.shape
@@ -264,3 +265,11 @@ results['XGBoost'] = {
     'auc': auc_xgb
 }
 print(results)
+
+#Logistic Regression performed better in terms of f1 and auc when compared to other models
+#Logistic regression adds a coefficient to each features before it derives the possibility.this gives hr an idea on what is contributing to risk of losing an employee
+
+joblib.dump(model, 'models/logistic_regression.pkl')
+joblib.dump(dt_model, 'models/decision_tree.pkl')
+joblib.dump(rf_model, 'models/random_forest.pkl')
+joblib.dump(xgb, 'models/xgboost.pkl')
